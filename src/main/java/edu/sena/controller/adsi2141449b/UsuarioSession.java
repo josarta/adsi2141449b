@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 
@@ -21,27 +22,27 @@ import javax.faces.context.FacesContext;
 @Named(value = "usuarioSession")
 @SessionScoped
 public class UsuarioSession implements Serializable {
-
+    
     @EJB
     UsuarioFacadeLocal usuarioFacadeLocal;
-
+    
     private String correoIn = "";
     private String claveIn = "";
     private String mensajes = "";
     private Usuario usuLogin = new Usuario();
     private Usuario usuReg = new Usuario();
-
+    
     public UsuarioSession() {
     }
-
+    
     public void cerrarSession() throws IOException {
         usuLogin = null;
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         FacesContext fc = FacesContext.getCurrentInstance();
         fc.getExternalContext().redirect("../index.xhtml");
-
+        
     }
-
+    
     public void ingresarUsuario() {
         if (usuarioFacadeLocal.crearUsuario(usuReg)) {
             mensajes = "usuOk";
@@ -50,12 +51,12 @@ public class UsuarioSession implements Serializable {
             mensajes = "usuErr";
             System.out.println("Error - Creando usuario");
         }
-
+        
     }
-
+    
     public void validarUsuario() throws IOException {
         usuLogin = usuarioFacadeLocal.validarUsuario(correoIn, claveIn);
-
+        
         if (usuLogin == null) {
             mensajes = "ErVal";
             System.out.println("Error - Validacion");
@@ -69,47 +70,71 @@ public class UsuarioSession implements Serializable {
                 mensajes = "ErBloq";
             }
         }
-
+        
     }
-
+    
+    public void actualizarUsuario(Usuario usuIn) {
+        try {
+            usuarioFacadeLocal.edit(usuIn);
+            mensajes = "acOk";
+        } catch (Exception e) {
+            System.out.println("Error::actualizarUsuario -> " + e.getMessage());
+            mensajes = "acBad";
+        }
+        
+    }
+    
+    public List<Usuario> leerTodos() {
+        return usuarioFacadeLocal.leertodos();
+    }
+    
+    public void cambiarEstado(Usuario usutabla) {
+        if (usutabla.getUsuEstado()) {
+            usutabla.setUsuEstado(Boolean.FALSE);
+        } else {
+            usutabla.setUsuEstado(Boolean.TRUE);
+        }
+        usuarioFacadeLocal.edit(usutabla);
+    }
+    
     public String getCorreoIn() {
         return correoIn;
     }
-
+    
     public void setCorreoIn(String correoIn) {
         this.correoIn = correoIn;
     }
-
+    
     public String getClaveIn() {
         return claveIn;
     }
-
+    
     public void setClaveIn(String claveIn) {
         this.claveIn = claveIn;
     }
-
+    
     public Usuario getUsuLogin() {
         return usuLogin;
     }
-
+    
     public void setUsuLogin(Usuario usuLogin) {
         this.usuLogin = usuLogin;
     }
-
+    
     public String getMensajes() {
         return mensajes;
     }
-
+    
     public void setMensajes(String mensajes) {
         this.mensajes = mensajes;
     }
-
+    
     public Usuario getUsuReg() {
         return usuReg;
     }
-
+    
     public void setUsuReg(Usuario usuReg) {
         this.usuReg = usuReg;
     }
-
+    
 }

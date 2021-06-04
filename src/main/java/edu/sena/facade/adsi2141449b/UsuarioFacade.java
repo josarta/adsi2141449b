@@ -6,6 +6,7 @@
 package edu.sena.facade.adsi2141449b;
 
 import edu.sena.entity.adsi2141449b.Usuario;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,6 +66,15 @@ public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFac
     }
     
     
-    
-    
+    @Override
+    public List<Usuario> leertodos(){
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            Query q = em.createQuery("SELECT u FROM Usuario u");
+            return q.getResultList();
+        } catch (Exception e) {
+             System.out.println("Error::leertodos -> " + e.getMessage());
+            return null;
+        }
+    }
 }

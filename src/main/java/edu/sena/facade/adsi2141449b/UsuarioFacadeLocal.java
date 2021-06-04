@@ -34,4 +34,6 @@ public interface UsuarioFacadeLocal {
     
     public boolean crearUsuario(Usuario usuReg);
     
+     List<Usuario> leertodos();
+    
 }

@@ -9,17 +9,13 @@
     <h:body>
         <ui:composition template="../WEB-INF/template/tema.xhtml">
             <ui:param name="usuario" value="#{usuarioSession.usuLogin.usuNombres} #{usuarioSession.usuLogin.usuApellidos}"></ui:param>
-            <ui:param name="modulo" value="Mis datos"></ui:param>
-            <ui:param name="titulo" value="Mis datos"></ui:param>
-
-            <ui:define name="content">
-                <ui:include src="pv/areatrabajo.xhtml"></ui:include>
-            </ui:define>
+            <ui:param name="modulo" value="Vendedor"></ui:param>
+            <ui:param name="titulo" value="Vendedor"></ui:param>
 
             <ui:define name="left">
-                        <ui:include src="pv/menuvertical.xhtml"></ui:include>
+                <ui:include src="pv/menuvertical.xhtml"></ui:include>
             </ui:define>
-            
+
         </ui:composition>
 
     </h:body>

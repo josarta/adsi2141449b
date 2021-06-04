@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><a href="javascript:void(0);" class="toggle-sidebar"><span class="fa fa-angle-double-left" data-toggle="offcanvas" title="Maximize Panel"></span></a> ${modulo}</h3>
+            </div>
+
+
+            <div class="panel-body">
+                <button class="btn btn-info" onclick="$('#actualizaUser').hide();$('#tablaUser').hide();$('#newUser').show()" >Nuevo +</button>
+                <div class="content-row" style="margin-top: 50px">
+
+                    <table id="tablaUser" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Tipo de documento</th>
+                                <th>Documento</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Correo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <h:form>
+                                <c:forEach items="#{usuarioSession.leerTodos()}" var="usu">
+                                    <tr>
+                                        <td>#{usu.usuUsuarioId}</td>
+                                        <td>#{usu.usuTipoDocumento}</td>
+                                        <td>#{usu.usuDocumento}</td>
+                                        <td>#{usu.usuNombres}</td>
+                                        <td>#{usu.usuApellidos}</td>
+                                        <td>#{usu.usuCorreo}</td>
+                                        <td>
+                                            <c:if test="#{usu.usuEstado}">
+                                                <img src="#{request.contextPath}/imagenes/activo.png" alt=""/>
+                                            </c:if>
+                                            <c:if test="#{!usu.usuEstado}">
+                                                <img src="#{request.contextPath}/imagenes/inactivo.png" alt=""/>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{usuarioSession.usuLogin.usuUsuarioId != usu.usuUsuarioId}">
+                                                <h:commandButton class="btn btn-primary" style="margin-right:10px" action="#{usuarioSession.cambiarEstado(usu)}" value="A/I"> </h:commandButton>
+                                            </c:if>
+                                            <button type="button" class="btn btn-danger" onclick="$('#actualizaUser').show();$('#tablaUser').hide()" style="margin-right:10px"  > A </button>
+
+                                        </td>                                    
+                                    </tr>
+                                </c:forEach>
+                            </h:form>
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="content-row" id="actualizaUser" style="margin-top: 50px; display: none">
+
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <c:if test="#{usuarioSession.mensajes.equalsIgnoreCase('acBad')}">
+                                <div class="alert alert-danger" role="alert">
+                                    Por favor, Valide sus datos, Intente nuevamente !!!
+                                </div>
+                            </c:if>
+                            <c:if test="#{usuarioSession.mensajes.equalsIgnoreCase('acOk')}">
+                                <div class="alert alert-success" role="alert">
+                                    #{usuarioSession.usuLogin.usuNombres} #{usuarioSession.usuLogin.usuApellidos}, Datos actualizados satisfactoriamente !!!
+                                </div>
+                            </c:if>
+                            <h:form>
+                                <div class="row">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-4">
+                                        <img src="#{request.contextPath}/imagenes/logo.gif" style="height: 150px; width: 150px" class="img-fluid" alt=""/>
+                                    </div>
+                                    <div class="colmd-4"></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inTipoDoc" value="Tipo de documento"  ></h:outputLabel>
+                                        <h:selectOneMenu disabled="true" value="#{usuarioSession.usuLogin.usuTipoDocumento}" id="inTipoDoc" class="form-control">
+                                            <f:selectItem itemValue="Cedula" itemLabel="Cedula"></f:selectItem>
+                                            <f:selectItem itemValue="Cedula Ex." itemLabel="Cedula Ex."></f:selectItem>
+                                            <f:selectItem itemValue="T. Identidad" itemLabel="T. Identidad"></f:selectItem>
+                                            <f:selectItem itemValue="Otro" itemLabel="Otro"></f:selectItem>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inDoc" value="Documento"></h:outputLabel>
+                                        <h:inputText 
+                                            disabled="true"
+                                            value="#{usuarioSession.usuLogin.usuDocumento}"
+                                            maxlength="11"
+                                            requiredMessage="ingrese un numero de documento"
+                                            class="form-control" 
+                                            id="inDoc">                                        
+                                        </h:inputText>
+                                        <h:message for="inDoc" style="color: red"></h:message>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inNombres" value="Nombres"> </h:outputLabel>
+                                        <h:inputText 
+                                            value="#{usuarioSession.usuLogin.usuNombres}"
+                                            required="true"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese sus nombres"
+                                            id="inNombres" 
+                                            class="form-control" />
+                                        <h:message for="inNombres" style="color: red"></h:message>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inApellidos" value="Apellidos"> </h:outputLabel>
+                                        <h:inputText
+                                            value="#{usuarioSession.usuLogin.usuApellidos}"
+                                            required="true"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese sus Apellidos"
+                                            id="inApellidos" 
+                                            class="form-control" />
+                                        <h:message for="inApellidos" style="color: red"></h:message>
+                                    </div>
+
+                                </div>                        
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inCorreo" value="Correo electronico"> </h:outputLabel>
+                                        <h:inputText 
+                                            disabled="true"
+                                            value="#{usuarioSession.usuLogin.usuCorreo}"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese un correo electronico"
+                                            id="inCorreo" 
+                                            class="form-control" />
+                                        <h:message for="inCorreo" style="color: red"></h:message>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inClave" value="Clave"> </h:outputLabel>
+                                        <h:inputSecret 
+                                            value="#{usuarioSession.usuLogin.usuClave}"
+                                            required="true"
+                                            maxlength="8"
+                                            requiredMessage="Ingrese una clave"
+                                            id="inClave" 
+                                            class="form-control" />
+                                        <h:message for="inClave" style="color: red"></h:message>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6" >
+                                        <button type="button" onclick="$('#actualizaUser').hide();$('#tablaUser').show()" class="btn btn-primary btn-block"> Cancelar </button>
+                                    </div>
+                                    <div class="col-md-6" >
+                                        <h:commandButton action="#{usuarioSession.actualizarUsuario(usuarioSession.usuLogin)}" class="btn btn-success btn-block" value="Actualizar"></h:commandButton>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div class="col-md-3"></div>
+
+                    </div>
+
+
+
+                    <div class="content-row" id="newUser" style="margin-top: 50px; display: none">
+
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <c:if test="#{usuarioSession.mensajes.equalsIgnoreCase('usuErr')}">
+                                <div class="alert alert-danger" role="alert">
+                                    Por favor, Valide sus datos !!!
+                                </div>
+                            </c:if>
+
+                            <c:if test="#{usuarioSession.mensajes.equalsIgnoreCase('usuOk')}">
+                                <div class="alert alert-success" role="alert">
+                                    #{usuarioSession.usuReg.usuNombres} #{usuarioSession.usuReg.usuApellidos}, Creado satisfactoriamente !!!
+                                </div>
+                            </c:if>
+                            <h:form>
+                                <div class="row">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-4">
+                                        <img src="#{request.contextPath}/imagenes/logo.gif" style="height: 150px; width: 150px" class="img-fluid" alt=""/>
+                                    </div>
+                                    <div class="colmd-4"></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inTipoDoc" value="Tipo de documento"  ></h:outputLabel>
+                                        <h:selectOneMenu  value="#{usuarioSession.usuReg.usuTipoDocumento}" id="inTipoDoc" class="form-control">
+                                            <f:selectItem itemValue="Cedula" itemLabel="Cedula"></f:selectItem>
+                                            <f:selectItem itemValue="Cedula Ex." itemLabel="Cedula Ex."></f:selectItem>
+                                            <f:selectItem itemValue="T. Identidad" itemLabel="T. Identidad"></f:selectItem>
+                                            <f:selectItem itemValue="Otro" itemLabel="Otro"></f:selectItem>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inDoc" value="Documento"></h:outputLabel>
+                                        <h:inputText 
+                                            required="true"
+                                            value="#{usuarioSession.usuReg.usuDocumento}"
+                                            maxlength="11"
+                                            requiredMessage="ingrese un numero de documento"
+                                            class="form-control" 
+                                            id="inDoc">                                        
+                                        </h:inputText>
+                                        <h:message for="inDoc" style="color: red"></h:message>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inNombres" value="Nombres"> </h:outputLabel>
+                                        <h:inputText 
+                                            value="#{usuarioSession.usuReg.usuNombres}"
+                                            required="true"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese sus nombres"
+                                            id="inNombres" 
+                                            class="form-control" />
+                                        <h:message for="inNombres" style="color: red"></h:message>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inApellidos" value="Apellidos"> </h:outputLabel>
+                                        <h:inputText
+                                            value="#{usuarioSession.usuReg.usuApellidos}"
+                                            required="true"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese sus Apellidos"
+                                            id="inApellidos" 
+                                            class="form-control" />
+                                        <h:message for="inApellidos" style="color: red"></h:message>
+                                    </div>
+
+                                </div>                        
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inCorreo" value="Correo electronico"> </h:outputLabel>
+                                        <h:inputText 
+                                            required="true"
+                                            value="#{usuarioSession.usuReg.usuCorreo}"
+                                            maxlength="50"
+                                            requiredMessage="Ingrese un correo electronico"
+                                            id="inCorreo" 
+                                            class="form-control" />
+                                        <h:message for="inCorreo" style="color: red"></h:message>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <h:outputLabel for="inClave" value="Clave"> </h:outputLabel>
+                                        <h:inputSecret 
+                                            value="#{usuarioSession.usuReg.usuClave}"
+                                            required="true"
+                                            maxlength="8"
+                                            requiredMessage="Ingrese una clave"
+                                            id="inClave" 
+                                            class="form-control" />
+                                        <h:message for="inClave" style="color: red"></h:message>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6" >
+                                        <button type="button" onclick="$('#actualizaUser').hide();$('#tablaUser').show();;$('#newUser').hide()" class="btn btn-primary btn-block"> Cancelar </button>
+                                    </div>
+                                    <div class="col-md-6" >
+                                        <h:commandButton action="#{usuarioSession.ingresarUsuario()}" class="btn btn-success btn-block" value="Crear"></h:commandButton>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div class="col-md-3"></div>
+
+                    </div>
+
+
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>       
+    </ui:composition>
+</html>
+
